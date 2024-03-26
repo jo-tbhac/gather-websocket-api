@@ -8,6 +8,11 @@ const slack = initializeSlackApp()
 await slack.start(PORT)
 gather.connect()
 
+gather.subscribeToConnection(() => {
+  console.log('connected')
+  console.log(gather.players)
+})
+
 gather.subscribeToEvent('playerJoins', (_, context) => {
   // ユーザーがログイン状態と判定されずユーザー名が取得できないケースがあるので、ログイン状態になるまで3秒ぐらい待つ
   setTimeout(async () => {
