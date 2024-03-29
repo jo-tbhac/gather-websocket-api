@@ -1,6 +1,7 @@
 import { API_KEY, SLACK_CHANNEL_ID } from './constants.ts'
-import { Game, validateRequest } from './deps.ts'
-import { buildExitMessage, buildJoinMessage, initializeSlackApp } from './slack.ts'
+import { validateRequest } from './deps.ts'
+import { initializeGather } from './gather.ts'
+import { buildExitMessage, buildJoinMessage, postMessage } from './slack.ts'
 
 const authenticate = (request: Request) => {
   const token = request.headers.get('authorization')
@@ -22,7 +23,6 @@ export const handleHealthCheck = async (request: Request) => {
 
 export const handleSubscribe = async (
   request: Request,
-  { gather, slack }: { gather: Game; slack: ReturnType<typeof initializeSlackApp> },
 ) => {
   const { error } = await validateRequest(request, { POST: {} })
   if (error) {
@@ -34,15 +34,17 @@ export const handleSubscribe = async (
     return new Response('invalid request', { status: 401 })
   }
 
+  const gather = await initializeGather()
+  gather.connect()
+
   gather.subscribeToEvent('playerJoins', (_, context) => {
     // ユーザーがログイン状態と判定されずユーザー名が取得できないケースがあるので、ログイン状態になるまで3秒ぐらい待つ
     setTimeout(async () => {
       const playerName = context.player?.name ?? ''
       const playersCount = Object.keys(gather.players).length
 
-      await slack.client.chat.postMessage({
+      await postMessage({
         channel: SLACK_CHANNEL_ID,
-        mrkdwn: true,
         text: buildJoinMessage(playerName, playersCount),
       })
     }, 3000)
@@ -52,9 +54,8 @@ export const handleSubscribe = async (
     const playerName = context.player?.name ?? ''
     const playersCount = Object.keys(gather.players).length
 
-    await slack.client.chat.postMessage({
+    await postMessage({
       channel: SLACK_CHANNEL_ID,
-      mrkdwn: true,
       text: buildExitMessage(playerName, playersCount),
     })
   })
