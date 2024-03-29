@@ -1,6 +1,7 @@
 {
   "tasks": {
-    "dev": "deno run --allow-read --allow-env --allow-sys --allow-net src/index.ts"
+    "dev": "deno run --allow-read --allow-env --allow-sys --allow-net src/index.ts",
+    "deps:update": "deno cache --lock=deno.lock --lock-write src/deps.ts"
   },
   "lint": {
     "rules": {
