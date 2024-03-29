@@ -4,14 +4,14 @@ import { initializeGather } from './gather.ts'
 import { initializeSlackApp } from './slack.ts'
 import { handleHealthCheck, handleNotFound, handleSubscribe } from './handler.ts'
 
-const gather = await initializeGather()
-const slack = initializeSlackApp()
-
-await slack.start(SLACK_APP_PORT)
-gather.connect()
-
 serve({
   '/subscribe': async (request) => await handleSubscribe(request, { gather, slack }),
   '/healthcheck': handleHealthCheck,
   404: handleNotFound,
 })
+
+const gather = await initializeGather()
+const slack = initializeSlackApp()
+
+await slack.start(SLACK_APP_PORT)
+gather.connect()
