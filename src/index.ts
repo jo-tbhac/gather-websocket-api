@@ -30,9 +30,9 @@ gather.subscribeToEvent('playerJoins', (_, context) => {
     const playerName = context.player?.name ?? ''
     const playersCount = Object.keys(gather.players).length
 
-    log(LOG_LEVEL.info, 'player joins: ', `${playerId} ${playerName}`)
-    log(LOG_LEVEL.info, 'current players: ', `${joinedPlayers}`)
-    log(LOG_LEVEL.info, '='.repeat(50))
+    log(LOG_LEVEL.info, 'player joins: ', context)
+    log(LOG_LEVEL.info, 'current players: ', joinedPlayers)
+    log(LOG_LEVEL.info, '='.repeat(80))
 
     if (playerId == null || joinedPlayers.has(playerId)) {
       return
@@ -52,9 +52,9 @@ gather.subscribeToEvent('playerExits', async (_, context) => {
   const playerName = context.player?.name ?? ''
   const playersCount = Object.keys(gather.players).length
 
-  log(LOG_LEVEL.info, 'player exits: ', `${playerId} ${playerName}`)
-  log(LOG_LEVEL.info, 'current players: ', `${joinedPlayers}`)
-  log(LOG_LEVEL.info, '='.repeat(50))
+  log(LOG_LEVEL.info, 'player exits: ', context)
+  log(LOG_LEVEL.info, 'current players: ', joinedPlayers)
+  log(LOG_LEVEL.info, '='.repeat(80))
 
   if (playerId == null) {
     return
